@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="style.css">
+        <title>Color Boxes</title>
+    </head>
+    <body>
+        <div id="main">
+            <div id="tutorial-stage" class="main-stage invisible">
+                <img src="src/tutorial.png" style="width: 226px;">
+                <div id="tutorial-container"></div>
+                <!-- <nav>
+                    <button onclick="skipTutorial()">Skip Tutorial</button>
+                </nav> -->
+            </div>
+
+            <div id="menu-stage" class="main-stage invisible">
+                <div id="level-list"></div>
+                <nav>
+                    <!-- <button onclick="openGameStage()">PLAY</button> -->
+                    <button onclick="openCreateMode()" class="btn-info">CREATE MODE</button>
+                </nav>
+            </div>
+
+            <div id="game-stage" class="main-stage invisible">
+                <label id="level-id">01</label>
+                <nav>
+                    <button onclick="openOverlay()"> II </button>
+                </nav>
+                <div id="game-container"></div>
+            </div>
+
+            <div id="create-stage" class="main-stage invisible">
+                <nav>
+                    <button onclick="reloadCreateTable()">RELOAD</button>
+                    <button onclick="openMenu()" class="btn-danger">MENU</button>
+                    <button onclick="exportCreateTable()" class="btn-info">EXPORT</button>
+                </nav>
+                <div id="create-container">
+                    <div id="create-tools">
+                        <div>
+                            <input type="number" value="5" min="1" max="12" onchange="updateCreateSize()">
+                            <input type="number" value="5" min="1" max="12" onchange="updateCreateSize()">
+                        </div>
+                        <hr>
+                        <div id="create-palette"></div>
+                    </div>
+                    <div id="create-table"></div>
+                </div>
+            </div>
+
+            <div id="load-stage" class="main-stage invisible">
+                <nav>
+                    <input type="text" id="load-url" readonly>
+                    <button onclick="copyUrlToCopyPaste()">COPY</button>
+                    <button class="btn-info" onclick="loadUrlCode()">RELOAD</button>
+                    <button onclick="openMenu()" class="btn-danger"> X </button>
+                </nav>
+                <div id="load-container"></div>
+            </div>
+
+            <div id="controls"></div>
+        </div>
+
+        <div id="overlay" hidden>
+            <div id="level-complete">
+                <h1>LEVEL</h1>
+                <h2>COMPLETE</h2>
+            </div>
+            <div id="level-pause">
+                <h1>PAUSE</h1>
+            </div>
+            <button id="next-level" class="btn-danger" onclick="nextLevel()" hidden>NEXT LEVEL</button>
+            <span></span>
+            <button id="resume-level" class="btn-danger" onclick="hideOverlay()">RESUME</button>
+
+            <button onclick="reloadLevel()">REPLAY</button>
+            <button onclick="openMenu()">MENU</button>
+        </div>
+
+        <script src="static/table.js"></script>
+        <script src="static/level.js"></script>
+        <script src="static/control.js" defer></script>
+        <script src="static/creation.js" defer></script>
+        <script src="static/main.js" defer></script>
+        <script src="static/load.js" defer></script>
+    </body>
+</html>

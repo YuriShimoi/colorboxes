@@ -1,0 +1,316 @@
+@font-face {
+    font-family: ARCO;
+    src: url(src/ARCO.ttf);
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    color: #f2f2f2;
+    background: #2b2b2b;
+    font-family: ARCO;
+}
+
+img {
+    pointer-events: none;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 10px 10px 15px 10px;
+    color: inherit;
+    font-size: medium;
+    font-family: inherit;
+    outline: none;
+    border: 1px solid #00000055;
+    border-radius: 3px;
+    background-color: inherit;
+    text-shadow: #00000055 1px 2px;
+    box-shadow: inset #00000033 0 0 0 200px;
+}
+button:active, button:hover {
+    box-shadow: inset #00000066 0 0 0 200px;
+    cursor: pointer;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: default;
+    box-shadow: inset #00000033 0 0 0 200px;
+}
+
+nav {
+    width: 100%;
+    margin: 20px 0 5px 0;
+    display: flex;
+    gap: 7px;
+    justify-content: flex-end;
+}
+
+table {
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 2px;
+}
+table td {
+    border: 1px solid #2b2b2b;
+    background: #222222;
+    padding: 5px;
+    border-radius: 7px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+hr {
+    border: none;
+    border-bottom: 2px solid #2b2b2b;
+}
+
+*[hidden], .invisible {
+    display: none !important;
+}
+
+button.btn-danger {
+    background: #df004a;
+}
+
+button.btn-info {
+    background: #4d6ad5;
+}
+
+input {
+    border: 1px solid #222222;
+    background: #2b2b2b;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 3px;
+    outline: none;
+}
+input:read-only {
+    background: #222222;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    align-content: stretch;
+    justify-items: center;
+    align-items: center;
+}
+#main > * {
+    text-align: center;
+}
+
+#level-id {
+    font-size: xx-large;
+    margin-bottom: -56px;
+    text-align: left;
+    width: 100%;
+}
+
+.main-stage {
+    padding: 10px;
+    display: flex;
+    height: fit-content;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.table-container {
+    width: 45vw;
+    max-width: fit-content;
+}
+.table-container tr {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.table-container td {
+    --size: 5vw;
+    aspect-ratio: 1;
+    width: var(--size);
+    height: var(--size);
+    max-width: 50px;
+    max-height: 50px;
+}
+.table-container .table-tile {
+    background-image: repeating-linear-gradient(-45deg, #00000022 0 8px, transparent 8px 16px) !important;
+}
+.table-container td .table-box {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    border-radius: 3px;
+    cursor: pointer;
+
+    box-shadow: inset transparent 0 0 0 0px;
+    transition: box-shadow ease 180ms;
+}
+.table-container td .table-box:hover {
+    box-shadow: inset #3a2c4b99 0 0 0 2px;
+}
+.table-container td .table-box.selected {
+    box-shadow: inset white 0 0 0 2px;
+}
+.table-container td .table-box.highlight {
+    box-shadow: #bcb4c555 0 0 0 3px;
+}
+.table-container td .table-box.selected.highlight {
+    box-shadow: inset white 0 0 0 2px, #bcb4c555 0 0 0 3px;
+}
+
+#controls {
+    align-self: start;
+}
+.control-keyboard {
+    display: flex;
+    margin-top: 30px;
+    max-width: 154px;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+.control-key {
+    padding: 8px 0px 12px 0px;
+    width: 50px;
+    height: 50px;
+    box-shadow: inset #00000033 -3px -3px 0 0;
+}
+.control-keyboard > .control-key:first-child {
+    margin: 0 52px;
+}
+
+#level-list {
+    display: flex;
+    padding: 3px;
+    gap: 5px;
+    max-width: 605px;
+    width: fit-content;
+    flex-wrap: wrap;
+    max-height: 80vh;
+    overflow-y: scroll;
+}
+#level-list::-webkit-scrollbar
+{
+	width: 8px;
+	background-color: #222222;
+    border-radius: 10px;
+}
+#level-list::-webkit-scrollbar-thumb
+{
+	background-color: white;
+    border-radius: 10px;
+}
+#level-list > button {
+    background: #222222;
+    border-radius: 5px;
+    text-align: center;
+    font-size: x-large;
+    width: 70px;
+    height: 70px;
+}
+#level-list > button:hover {
+    box-shadow: white 0 0 0 2px;
+}
+
+#overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #2b2b2b88;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2px;
+}
+#overlay button {
+    font-size: large;
+    min-width: 120px;
+    border-radius: 5px;
+    background: #424242;
+    box-shadow: #00000055 0 1px;
+    margin-top: 10px;
+}
+#overlay button.btn-danger {
+    min-width: 160px;
+    background: #df004a;
+    padding: 15px 20px 20px 20px;
+}
+#overlay button:active, #overlay button:hover {
+    box-shadow: inset #00000033 0 0 0 200px, #00000055 0 1px;
+    cursor: pointer;
+}
+#overlay button.invisible {
+    display: none;
+}
+#overlay h1, h2 {
+    margin: 0;
+    text-align: center;
+    font-weight: normal;
+    text-shadow: #000000dd 0 2px;
+}
+#overlay h1 {
+    font-size: 6rem;
+}
+#overlay h2 {
+    font-size: 2.5rem;
+}
+#overlay *:nth-child(even) {
+    rotate: 3deg;
+}
+#overlay *:nth-child(odd) {
+    rotate: -2deg;
+}
+
+#create-container {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+}
+
+#create-table td:hover {
+    box-shadow: inset 0 0 0 1px white;
+    cursor: pointer;
+}
+
+#create-tools {
+    padding: 10px 5px;
+    border-radius: 7px;
+    background: #222222;
+    border: 1px solid #2b2b2b;
+}
+#create-tools input {
+    min-width: 30px;
+    width: 5vw;
+    max-width: 50px;
+}
+
+#create-palette {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+}
+#create-palette span {
+    border: 1px solid #2b2b2b;
+    aspect-ratio: 1;
+    border-radius: 5px;
+}
+#create-palette span:hover {
+    border: 1px solid white;
+    cursor: pointer;
+}
+#create-palette span.selected {
+    box-shadow: white 0 0 0 2px;
+}
+#create-palette span:nth-child(odd) {
+    scale: 0.85;
+}
+#create-palette span:nth-child(even) {
+    background-image: repeating-linear-gradient(-45deg, #00000022 0 8px, transparent 8px 16px) !important;
+}
