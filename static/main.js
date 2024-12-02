@@ -99,7 +99,7 @@ function hideOverlay() {
 }
 
 function openCreateMode() {
-    reloadCreateTable();
+    resizeCreateTable(5, 5);
     enableStage('create');
     showControls();
 }

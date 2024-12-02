@@ -148,4 +148,3 @@ function bindPalette() {
 }
 
 bindPalette();
-resizeCreateTable(5, 5);
