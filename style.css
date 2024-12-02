@@ -130,12 +130,12 @@ input:read-only {
     flex-wrap: nowrap;
 }
 .table-container td {
-    --size: 5vw;
+    --size: 8vw;
     aspect-ratio: 1;
     width: var(--size);
     height: var(--size);
-    max-width: 50px;
-    max-height: 50px;
+    max-width: 60px;
+    max-height: 60px;
 }
 .table-container .table-tile {
     background-image: repeating-linear-gradient(-45deg, #00000022 0 8px, transparent 8px 16px) !important;
@@ -313,4 +313,8 @@ input:read-only {
 }
 #create-palette span:nth-child(even) {
     background-image: repeating-linear-gradient(-45deg, #00000022 0 8px, transparent 8px 16px) !important;
+}
+
+#load-url {
+    max-width: 150px;
 }

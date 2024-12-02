@@ -30,12 +30,12 @@ function updateCreateSize() {
     let [width_input, height_input] = creation_tools.getElementsByTagName('input');
     let new_width = Number(width_input.value);
     if(new_width < 1) new_width = 1;
-    if(new_width > 12) new_width = 12;
+    if(new_width > 13) new_width = 13;
     width_input.value = new_width;
     
     let new_height = Number(height_input.value);
     if(new_height < 1) new_height = 1;
-    if(new_height > 12) new_height = 12;
+    if(new_height > 13) new_height = 13;
     height_input.value = new_height;
 
     resizeCreateTable(new_width, new_height);
@@ -83,7 +83,7 @@ function paintTableTile(element) {
         let index = Table.formatPositionToIndex(pos[0], pos[1]);
         if(c_selected.getAttribute('type') === 'box') {
             if(c_table.mapping[pos[0]][pos[1]] && c_table.mapping[pos[0]][pos[1]].code === code) {
-                c_table.mapping[pos[0]][pos[1]] = null;
+                delete c_table.mapping[pos[0]][pos[1]];
             }
             else {
                 c_table.mapping[pos[0]][pos[1]] = Box.CACHE[code];
@@ -91,7 +91,7 @@ function paintTableTile(element) {
         }
         else {
             if(c_table.solution_mapping[index] && c_table.solution_mapping[index].code === code) {
-                c_table.solution_mapping[index] = null;
+                delete c_table.solution_mapping[index];
             }
             else {
                 c_table.solution_mapping[index] = Box.CACHE[code];

@@ -6,7 +6,7 @@ class Box {
     static GREEN = new Box('3', '#1ab82a', '#17661f');
     static YELLOW = new Box('4', '#f7dc2d', '#917e20');
 
-    static WALL = new Box('0', '#2b2b2b', '#2b2b2b', false);
+    static WALL = new Box('0', '#d2d2d2', '#d2d2d2', false);
 
     constructor(code, color, shadow, can_move=true) {
         this.code = code;
@@ -320,7 +320,7 @@ class TableManager {
             }
         }
 
-        if(matches.length === Object.keys(TableManager.aux_copy).length) {
+        if(matches.length === Object.values(TableManager.aux_copy).filter(b => b.can_move).length) {
             setTimeout(() => {
                 TableManager.victory_fuction();
             }, 10);
