@@ -101,7 +101,7 @@ function hideOverlay() {
 function openCreateMode() {
     resizeCreateTable(c_width, c_height);
     enableStage('create');
-    showControls();
+    hideControls();
 }
 
 function plotTable(element, table, victory_fuction, selected_box=null, clearPreviousPlot=true) {
