@@ -26,15 +26,13 @@ class Table {
     static _GEN_ID_ = 0;
     
     container = null;
-
     mapping_aux = {};
-    aux_copy = null;
-    mapping_copy = null;
 
-    constructor(size_x, size_y, mapping=null, solution_mapping=null) {
+    constructor(size_x, size_y, mapping=null, solution_mapping=null, modifiers=[]) {
         this.id = Table._GEN_ID_++;
         this.mapping = this.fitToRectangle(size_x, size_y, mapping);
         this.solution_mapping = solution_mapping?? {};
+        this.modifiers = modifiers;
         this.buildAuxiliarMapping();
     }
 

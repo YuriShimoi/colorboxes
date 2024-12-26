@@ -104,7 +104,8 @@ function openCreateMode() {
     hideControls();
 }
 
-function plotTable(element, table, victory_fuction, selected_box=null, clearPreviousPlot=true) {
+function plotTable(element, level, victory_fuction, selected_box=null, clearPreviousPlot=true) {
+    const table = level.table;
     TableManager.SELECTED_BOX = selected_box;
     if(clearPreviousPlot) TableManager.clearPlot();
 
@@ -134,7 +135,12 @@ if(localStorage.getItem('last-level') !== null) {
 }
 
 for(let level in LEVEL_LIST) {
+    const modifiers = LEVEL_LIST[level].modifiers;
+    
     let level_block = document.createElement('BUTTON');
+    if(modifiers && modifiers.includes(MODIFIER.PORTAL)) {
+        level_block.classList.add('mod-portal');
+    }
     level_block.innerHTML = formatLevelString(Number(level)+1);
 
     level_block.onclick = () => {
