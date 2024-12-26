@@ -16,7 +16,8 @@ function reloadCreateTable() {
     table_container.classList.add('table-container');
     creation_table.appendChild(table_container);
 
-    TableManager.setTarget(c_table, table_container);
+    c_table.container = table_container;
+    TableManager.setTarget(c_table);
     TableManager.plotTable();
 }
 

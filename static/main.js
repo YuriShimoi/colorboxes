@@ -112,7 +112,8 @@ function plotTable(element, table, victory_fuction, selected_box=null, clearPrev
     table_container.classList.add('table-container');
     element.appendChild(table_container);
 
-    TableManager.setTarget(table, table_container);
+    table.container = table_container;
+    TableManager.setTarget(table);
     TableManager.victory_fuction = victory_fuction;
     TableManager.plotTable();
 }

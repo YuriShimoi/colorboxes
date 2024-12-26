@@ -23,9 +23,16 @@ class Box {
 }
 
 class Table {
+    static _GEN_ID_ = 0;
+    
+    container = null;
+
     mapping_aux = {};
+    aux_copy = null;
+    mapping_copy = null;
 
     constructor(size_x, size_y, mapping=null, solution_mapping=null) {
+        this.id = Table._GEN_ID_++;
         this.mapping = this.fitToRectangle(size_x, size_y, mapping);
         this.solution_mapping = solution_mapping?? {};
         this.buildAuxiliarMapping();
@@ -88,6 +95,56 @@ class Table {
         }
 
         return encodeURI(codestr);
+    }
+
+    genCopies() {
+        this.aux_copy = this.mappingAuxCopy();
+        this.mapping_copy = this.mappingCopy();
+    }
+
+    moveBox(boxCode, movement) {
+        let new_mapping = {};
+
+        let boxes = this.container.getElementsByTagName(`span`);
+        for(let box of boxes) {
+            let box_code = box.getAttribute('box-code');
+            let box_index = box.getAttribute('table-pos');
+            let [pos_x, pos_y] = Table.decodeIndexToPosition(box_index);
+
+            let map_index = box_index;
+            if(box_code === boxCode) {
+                let new_x = Number(pos_x) + movement[0];
+                let new_y = Number(pos_y) + movement[1];
+                if(new_x >= 0 && new_x < this.mapping_copy.length && new_y >= 0 && new_y < this.mapping_copy[0].length) {
+                    map_index = Table.formatPositionToIndex(new_x, new_y);
+                }
+            }
+
+            if(map_index in new_mapping) new_mapping[map_index].push(box_code);
+            else new_mapping[map_index] = [box_code];
+        }
+
+        while(Object.values(new_mapping).filter(mlist => mlist.length > 1).length > 0) {
+            for(let index in new_mapping) {
+                if(new_mapping[index].length > 1) {
+                    let pos = Table.decodeIndexToPosition(index);
+                    let prev_pos = [Number(pos[0]) + (movement[0]*-1), Number(pos[1]) + (movement[1]*-1)];
+                    let prev_index = Table.formatPositionToIndex(prev_pos[0], prev_pos[1]);
+                    let prev_code = this.aux_copy[prev_index].code;
+
+                    new_mapping[index].splice(new_mapping[index].indexOf(prev_code), 1);
+                    if(prev_index in new_mapping) new_mapping[prev_index].push(prev_code);
+                    else new_mapping[prev_index] = [prev_code];
+                }
+            }
+        }
+        this.aux_copy = {};
+        for(let index in new_mapping) {
+            new_mapping[index] = new_mapping[index][0];
+            this.aux_copy[index] = Box.CACHE[new_mapping[index]];
+        }
+
+        return new_mapping;
     }
 
     static decode(codestr) {
@@ -157,31 +214,31 @@ class Table {
 
 class TableManager {
     static SELECTED_BOX = null;
-
-    static aux_copy = null;
-    static mapping_copy = null;
     
     static target_table = null;
-    static target_element = null;
     static victory_fuction = () => null;
 
-    static setTarget(table, element_container) {
+    static setTarget(table) {
+        if(table instanceof Table) table = [table];
         TableManager.target_table = table;
-        TableManager.target_element = element_container;
-        TableManager.aux_copy = table.mappingAuxCopy();
-        TableManager.mapping_copy = table.mappingCopy();
+        for(const tbl of table) tbl.genCopies();
         TableManager.victory_fuction = () => {};
     }
 
     static clearPlot() {
-        if(TableManager.target_element) TableManager.target_element.remove();
+        if(!TableManager.target_table) return;
+        for(const table of TableManager.target_table) {
+            if(table.container) table.container.remove();
+        }
     }
 
     static clearSelected() {
         TableManager.SELECTED_BOX = null;
-        let boxes = TableManager.target_element.getElementsByTagName('span');
-        for(let box of boxes) {
-            box.classList.remove('selected');
+        for(const table of TableManager.target_table) {
+            let boxes = table.container.getElementsByTagName('span');
+            for(let box of boxes) {
+                box.classList.remove('selected');
+            }
         }
     }
 
@@ -189,9 +246,11 @@ class TableManager {
         if(Box.CACHE[code].can_move) {
             TableManager.clearSelected();
             TableManager.SELECTED_BOX = code;
-            let boxes = TableManager.target_element.querySelectorAll(`[box-code="${code}"]`);
-            for(let box of boxes) {
-                box.classList.add('selected');
+            for(const table of TableManager.target_table) {
+                let boxes = table.container.querySelectorAll(`[box-code="${code}"]`);
+                for(let box of boxes) {
+                    box.classList.add('selected');
+                }
             }
         }
     }
@@ -205,70 +264,39 @@ class TableManager {
             'right': [0, 1]
         }[direction];
 
-        let new_mapping = {};
-        let boxes = TableManager.target_element.getElementsByTagName(`span`);
-        for(let box of boxes) {
-            let box_code = box.getAttribute('box-code');
-            let box_index = box.getAttribute('table-pos');
-            let [pos_x, pos_y] = Table.decodeIndexToPosition(box_index);
-
-            let map_index = box_index;
-            if(box_code === TableManager.SELECTED_BOX) {
-                let new_x = Number(pos_x) + movement[0];
-                let new_y = Number(pos_y) + movement[1];
-                if(new_x >= 0 && new_x < this.mapping_copy.length && new_y >= 0 && new_y < this.mapping_copy[0].length) {
-                    map_index = Table.formatPositionToIndex(new_x, new_y);
-                }
-            }
-
-            if(map_index in new_mapping) new_mapping[map_index].push(box_code);
-            else new_mapping[map_index] = [box_code];
+        for(let tind in TableManager.target_table) {
+            const table = TableManager.target_table[tind];
+            let new_mapping = table.moveBox(TableManager.SELECTED_BOX, movement);
+            TableManager.updatePlot(tind, new_mapping);
         }
 
-        while(Object.values(new_mapping).filter(mlist => mlist.length > 1).length > 0) {
-            for(let index in new_mapping) {
-                if(new_mapping[index].length > 1) {
-                    let pos = Table.decodeIndexToPosition(index);
-                    let prev_pos = [Number(pos[0]) + (movement[0]*-1), Number(pos[1]) + (movement[1]*-1)];
-                    let prev_index = Table.formatPositionToIndex(prev_pos[0], prev_pos[1]);
-                    let prev_code = this.aux_copy[prev_index].code;
-
-                    new_mapping[index].splice(new_mapping[index].indexOf(prev_code), 1);
-                    if(prev_index in new_mapping) new_mapping[prev_index].push(prev_code);
-                    else new_mapping[prev_index] = [prev_code];
-                }
-            }
-        }
-        TableManager.aux_copy = {};
-        for(let index in new_mapping) {
-            new_mapping[index] = new_mapping[index][0];
-            TableManager.aux_copy[index] = Box.CACHE[new_mapping[index]];
-        }
-        TableManager.updatePlot(new_mapping);
+        TableManager.checkVictory();
     }
 
     static plotTable(reset_selected=false) {
         if(reset_selected) TableManager.SELECTED_BOX = null;
 
-        for(let pos_x in TableManager.target_table.mapping) {
-            let table_row = document.createElement('TR');
-            for(let pos_y in TableManager.target_table.mapping[pos_x]) {
-                let table_tile = document.createElement('TD');
-                
-                let index = Table.formatPositionToIndex(pos_x, pos_y);
-                if(TableManager.target_table.mapping_aux[index]) {
-                    let tile_box = TableManager.newBoxElement(index, TableManager.target_table.mapping_aux[index]);
-                    table_tile.appendChild(tile_box);
+        for(const table of TableManager.target_table) {
+            for(let pos_x in table.mapping) {
+                let table_row = document.createElement('TR');
+                for(let pos_y in table.mapping[pos_x]) {
+                    let table_tile = document.createElement('TD');
+                    
+                    let index = Table.formatPositionToIndex(pos_x, pos_y);
+                    if(table.mapping_aux[index]) {
+                        let tile_box = TableManager.newBoxElement(index, table.mapping_aux[index]);
+                        table_tile.appendChild(tile_box);
+                    }
+                    if(table.solution_mapping[index]) {
+                        table_tile.setAttribute('tile-code', table.solution_mapping[index].code);
+                        table_tile.classList.add('table-tile');
+                        table_tile.style.background = table.solution_mapping[index].shadow;
+                    }
+                    
+                    table_row.appendChild(table_tile);
                 }
-                if(TableManager.target_table.solution_mapping[index]) {
-                    table_tile.setAttribute('tile-code', TableManager.target_table.solution_mapping[index].code);
-                    table_tile.classList.add('table-tile');
-                    table_tile.style.background = TableManager.target_table.solution_mapping[index].shadow;
-                }
-                
-                table_row.appendChild(table_tile);
+                table.container.appendChild(table_row);
             }
-            TableManager.target_element.appendChild(table_row);
         }
         TableManager.checkVictory();
     }
@@ -288,13 +316,14 @@ class TableManager {
         return tile_box;
     }
 
-    static updatePlot(new_mapping) {
-        let boxes = TableManager.target_element.getElementsByTagName('span');
+    static updatePlot(index, new_mapping) {
+        const table = TableManager.target_table[index];
+        let boxes = table.container.getElementsByTagName('span');
         for(let index=boxes.length-1; index >= 0; index--) {
             boxes[index].remove();
         }
 
-        let table_rows = TableManager.target_element.getElementsByTagName('tr');
+        let table_rows = table.container.getElementsByTagName('tr');
         for(let pos_x=0; pos_x < table_rows.length; pos_x++) {
             let table_boxes = table_rows[pos_x].getElementsByTagName('td');
             for(let pos_y=0; pos_y < table_boxes.length; pos_y++) {
@@ -304,23 +333,27 @@ class TableManager {
                 }
             }
         }
-
-        TableManager.checkVictory();
     }
 
     static checkVictory() {
-        let matches = TableManager.target_table.matchWithSolution(TableManager.aux_copy);
-        let boxes = TableManager.target_element.getElementsByTagName('span');
-        for(let box of boxes) {
-            if(matches.includes(box.getAttribute('table-pos'))) {
-                box.classList.add('highlight');
+        let match_amount = 0;
+        for(const table of TableManager.target_table) {
+            let matches = table.matchWithSolution(table.aux_copy);
+            let boxes = table.container.getElementsByTagName('span');
+            for(let box of boxes) {
+                if(matches.includes(box.getAttribute('table-pos'))) {
+                    box.classList.add('highlight');
+                }
+                else {
+                    box.classList.remove('highlight');
+                }
             }
-            else {
-                box.classList.remove('highlight');
+
+            if(matches.length === Object.values(table.aux_copy).filter(b => b.can_move).length) {
+                match_amount++;
             }
         }
-
-        if(matches.length === Object.values(TableManager.aux_copy).filter(b => b.can_move).length) {
+        if(match_amount >= TableManager.target_table.length) {
             setTimeout(() => {
                 TableManager.victory_fuction();
             }, 10);

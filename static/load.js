@@ -28,7 +28,8 @@ function loadUrlCode(code=null) {
     table_container.classList.add('table-container');
     load_container.appendChild(table_container);
 
-    TableManager.setTarget(new_table, table_container);
+    new_table.container = table_container;
+    TableManager.setTarget(new_table);
     TableManager.plotTable();
 }
 
