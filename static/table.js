@@ -77,7 +77,8 @@ class Table {
     }
 
     encode() {
-        let codestr = `${this.mapping.length}*${this.mapping[0].length}+`;
+        let codestr = `${this.modifiers.join('')}+`;
+        codestr += `${this.mapping.length}*${this.mapping[0].length}+`;
         let firstof = true;
         for(let box in this.mapping_aux) {
             if(!firstof) codestr += '$';
@@ -101,8 +102,9 @@ class Table {
     }
 
     moveBox(boxCode, movement) {
+        const [lenx, leny] = [this.mapping_copy.length, this.mapping_copy[0].length];
         let new_mapping = {};
-
+        
         let boxes = this.container.getElementsByTagName(`span`);
         for(let box of boxes) {
             let box_code = box.getAttribute('box-code');
@@ -113,8 +115,13 @@ class Table {
             if(box_code === boxCode) {
                 let new_x = Number(pos_x) + movement[0];
                 let new_y = Number(pos_y) + movement[1];
-                if(new_x >= 0 && new_x < this.mapping_copy.length && new_y >= 0 && new_y < this.mapping_copy[0].length) {
+                if(new_x >= 0 && new_x < lenx && new_y >= 0 && new_y < leny) {
                     map_index = Table.formatPositionToIndex(new_x, new_y);
+                }
+                else if(this.modifiers.includes(MODIFIER.PORTAL)) {
+                    let port_x = (new_x + lenx) % lenx;
+                    let port_y = (new_y + leny) % leny;
+                    map_index = Table.formatPositionToIndex(port_x, port_y);
                 }
             }
 
@@ -147,7 +154,7 @@ class Table {
 
     static decode(codestr) {
         codestr = decodeURI(codestr);
-        let [size, boxes, solutions] = codestr.split('+');
+        let [modifiers, size, boxes, solutions] = codestr.split('+');
         size = size.split('*');
         size = [Number(size[0]), Number(size[1])];
 
@@ -163,7 +170,7 @@ class Table {
             solutions_decode[pos] = Box.CACHE[code];
         }
 
-        return new Table(size[0], size[1], Table.mapFromObject(boxes_decode), solutions_decode);
+        return new Table(size[0], size[1], Table.mapFromObject(boxes_decode), solutions_decode, modifiers.split(''));
     }
 
     static formatPositionToIndex(px, py) {
@@ -294,6 +301,9 @@ class TableManager {
                     table_row.appendChild(table_tile);
                 }
                 table.container.appendChild(table_row);
+            }
+            if(table.modifiers.includes(MODIFIER.PORTAL) && !table.container.classList.contains('tbl-portal')) {
+                table.container.classList.add('tbl-portal');
             }
         }
         TableManager.checkVictory();

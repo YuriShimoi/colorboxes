@@ -69,8 +69,10 @@ function reloadLevel() {
     let gm_element = document.getElementById('game-container');
     plotTable(gm_element, LEVEL_LIST[SELECTED_LEVEL], () => {
         openOverlay(false);
-        LAST_LEVEL = SELECTED_LEVEL+1;
-        localStorage.setItem('last-level', LAST_LEVEL);
+        if(LAST_LEVEL <= SELECTED_LEVEL) {
+            LAST_LEVEL = SELECTED_LEVEL+1;
+            localStorage.setItem('last-level', LAST_LEVEL);
+        }
     });
 }
 

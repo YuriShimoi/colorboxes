@@ -9,7 +9,7 @@ var c_selected = null;
 
 function reloadCreateTable() {
     TableManager.clearPlot();
-    c_table = new Table(c_height, c_width, c_table.mapping, c_table.solution_mapping);
+    c_table = new Table(c_height, c_width, c_table.mapping, c_table.solution_mapping, c_table.modifiers);
 
     let table_container = document.createElement('TABLE');
     table_container.onclick = (event) => paintTableTile(event.target);
@@ -40,6 +40,17 @@ function updateCreateSize() {
     height_input.value = new_height;
 
     resizeCreateTable(new_width, new_height);
+}
+
+function updatePortalModifier(element) {
+    if(c_table.modifiers.includes(MODIFIER.PORTAL) && !element.checked) {
+        c_table.modifiers.splice(c_table.modifiers.indexOf(MODIFIER.PORTAL), 1);
+        reloadCreateTable();
+    }
+    if(!c_table.modifiers.includes(MODIFIER.PORTAL) && element.checked) {
+        c_table.modifiers.push(MODIFIER.PORTAL);
+        reloadCreateTable();
+    }
 }
 
 function exportCreateTable() {

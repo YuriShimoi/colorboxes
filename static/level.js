@@ -1,6 +1,6 @@
 const MODIFIER = {
-    'MULTIPLE': 0,
-    'PORTAL': 1
+    'MULTIPLE': 'm',
+    'PORTAL': 'p'
 };
 
 const TUTORIAL_LEVEL_LIST = [
@@ -19,6 +19,7 @@ const TUTORIAL_LEVEL_LIST = [
 ];
 
 const LEVEL_LIST = [
+    // #region [SIMPLE LEVELS]
     {
         'table': new Table(3, 5, Table.mapFromObject({ // BOXES
             '0-0': Box.GREEN,
@@ -330,6 +331,8 @@ const LEVEL_LIST = [
             '6-1': Box.RED
         })
     },
+    // #endregion
+    // #region [PORTAL LEVELS]
     {
         'modifiers': [MODIFIER.PORTAL],
         'table': new Table(4, 4, Table.mapFromObject({ // BOXES
@@ -339,5 +342,6 @@ const LEVEL_LIST = [
             '0-0': Box.GREEN,
             '3-3': Box.GREEN
         }, [MODIFIER.PORTAL])
-    }
+    },
+    // #endregion
 ];
