@@ -4,18 +4,22 @@ const MODIFIER = {
 };
 
 const TUTORIAL_LEVEL_LIST = [
-    new Table(1, 5, Table.mapFromObject({ // BOXES
-        '0-0': Box.GREEN
-    }), { // SOLUTION
-        '0-4': Box.GREEN
-    }),
-    new Table(1, 5, Table.mapFromObject({ // BOXES
-        '0-0': Box.GREEN,
-        '0-2': Box.BLUE
-    }), { // SOLUTION
-        '0-3': Box.GREEN,
-        '0-4': Box.BLUE
-    })
+    {
+        'table': new Table(1, 5, Table.mapFromObject({ // BOXES
+            '0-0': Box.GREEN
+        }), { // SOLUTION
+            '0-4': Box.GREEN
+        })
+    },
+    {
+        'table': new Table(1, 5, Table.mapFromObject({ // BOXES
+            '0-0': Box.GREEN,
+            '0-2': Box.BLUE
+        }), { // SOLUTION
+            '0-3': Box.GREEN,
+            '0-4': Box.BLUE
+        })
+    }
 ];
 
 const LEVEL_LIST = [
