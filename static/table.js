@@ -8,17 +8,71 @@ class Box {
 
     static WALL = new Box('0', '#d2d2d2', '#d2d2d2', false);
 
-    constructor(code, color, shadow, can_move=true) {
+    constructor(code, color, shadow, can_move=true, can_select=true) {
+        if(code === undefined) return;
+
         this.code = code;
         this.color = color;
         this.shadow = shadow;
         this.can_move = can_move;
+        this.can_select = can_move? can_select: false;
 
-        Box.CACHE[code] = this;
+        if(!(code in Box.CACHE)) Box.CACHE[code] = this;
     }
 
-    isEqual(outer_box) {
-        return String(this.code) === String(outer_box.code); 
+    isEqual(outer_box, ignore_multi=false) {
+        if(outer_box instanceof Box)
+            return Box.compare(this.code, outer_box.code, ignore_multi);
+        else
+            return Box.compare(this.code, String(outer_box), ignore_multi);
+    }
+
+    static compare(code1, code2, ignore_multi=false) {
+        [code1, code2] = [String(code1), String(code2)];
+        if(code1 == code2) return true;
+        if(ignore_multi) return false;
+
+        if(Box.CACHE[code1] instanceof MultipleBox) {
+            return Box.CACHE[code1].boxes.includes(code2);
+        }
+        
+        if(Box.CACHE[code2] instanceof MultipleBox) {
+            return Box.CACHE[code2].boxes.includes(code1);
+        }
+
+        return false;
+    }
+
+    static Multi(...boxes) {
+        return new MultipleBox(...boxes);
+    }
+}
+
+class MultipleBox extends Box {
+    constructor(...codes) {
+        super();
+
+        codes = codes.map(c => c instanceof Box? c.code: String(c));
+        this.code = codes.join('%');
+        this.boxes = codes;
+        this.can_move = true;
+        this.can_select = false;
+        this.setRadialColors(codes);
+
+        if(!(this.code in Box.CACHE)) Box.CACHE[this.code] = this;
+    }
+
+    setRadialColors(codes) {
+        const radial = (colors) => {
+            const deg = 360 / colors.length;
+            const grad = 4;
+            const color_list = colors.reduce((p, v, i) => `${p}${v} ${deg*i+grad-16}deg ${deg*(i+1)-grad-16}deg,`, '').slice(0, -1);
+            return `conic-gradient(from -29deg, ${color_list}, ${colors[0]} ${344+grad}deg)`;
+        };
+        const stripe_effect = 'repeating-linear-gradient(-45deg, #00000022 0 8px, transparent 8px 16px)';
+
+        this.color = radial(codes.map(c => Box.CACHE[c].color));
+        this.shadow = stripe_effect + ', ' + radial(codes.map(c => Box.CACHE[c].shadow));
     }
 }
 
@@ -69,7 +123,7 @@ class Table {
     matchWithSolution(mapping) {
         let matches = [];
         for(let index in this.solution_mapping) {
-            if(this.solution_mapping[index] === mapping[index]) {
+            if(this.solution_mapping[index].isEqual(mapping[index], true)) {
                 matches.push(index);
             }
         }
@@ -112,7 +166,7 @@ class Table {
             let [pos_x, pos_y] = Table.decodeIndexToPosition(box_index);
 
             let map_index = box_index;
-            if(box_code === boxCode) {
+            if(Box.compare(box_code, boxCode)) {
                 let new_x = Number(pos_x) + movement[0];
                 let new_y = Number(pos_y) + movement[1];
                 if(new_x >= 0 && new_x < lenx && new_y >= 0 && new_y < leny) {
@@ -248,13 +302,13 @@ class TableManager {
     }
 
     static selectBox(code) {
-        if(Box.CACHE[code].can_move) {
+        if(Box.CACHE[code].can_move && !Box.compare(code, TableManager.SELECTED_BOX)) {
             TableManager.clearSelected();
             TableManager.SELECTED_BOX = code;
             for(const table of TableManager.target_table) {
-                let boxes = table.container.querySelectorAll(`[box-code="${code}"]`);
+                let boxes = table.container.getElementsByTagName('span');
                 for(let box of boxes) {
-                    box.classList.add('selected');
+                    if(Box.compare(code, box.getAttribute('box-code'))) box.classList.add('selected');
                 }
             }
         }
@@ -295,7 +349,8 @@ class TableManager {
                     if(table.solution_mapping[index]) {
                         table_tile.setAttribute('tile-code', table.solution_mapping[index].code);
                         table_tile.classList.add('table-tile');
-                        table_tile.style.background = table.solution_mapping[index].shadow;
+                        const isMulti = table.solution_mapping[index] instanceof MultipleBox;
+                        table_tile.style.setProperty('background', table.solution_mapping[index].shadow, isMulti? 'important': '');
                     }
                     
                     table_row.appendChild(table_tile);
@@ -315,9 +370,9 @@ class TableManager {
         tile_box.setAttribute('box-code', box.code);
         tile_box.classList.add('table-box');
 
-        tile_box.style.background = box.color;
-        if(box.code === TableManager.SELECTED_BOX) tile_box.classList.add('selected');
-        tile_box.onclick = () => {
+        tile_box.style.setProperty('background', box.color);
+        if(box.isEqual(TableManager.SELECTED_BOX)) tile_box.classList.add('selected');
+        if(box.can_select) tile_box.onclick = () => {
             TableManager.selectBox(box.code);
         };
 

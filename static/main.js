@@ -140,8 +140,13 @@ for(let level in LEVEL_LIST) {
     const modifiers = LEVEL_LIST[level].modifiers;
     
     let level_block = document.createElement('BUTTON');
-    if(modifiers && modifiers.includes(MODIFIER.PORTAL)) {
-        level_block.classList.add('mod-portal');
+    if(modifiers) {
+        if(modifiers.includes(MODIFIER.PORTAL)) {
+            level_block.classList.add('mod-portal');
+        }
+        if(modifiers.includes(MODIFIER.MULTIPLE)) {
+            level_block.classList.add('mod-multiple');
+        }
     }
     level_block.innerHTML = formatLevelString(Number(level)+1);
 

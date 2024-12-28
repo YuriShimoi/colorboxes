@@ -344,4 +344,18 @@ const LEVEL_LIST = [
         }, [MODIFIER.PORTAL])
     },
     // #endregion
+    // #region [PORTAL LEVELS]
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(4, 5, Table.mapFromObject({ // BOXES
+            '1-2': Box.Multi(Box.RED, Box.YELLOW),
+            '2-4': Box.RED,
+            '2-0': Box.YELLOW
+        }), { // SOLUTION
+            '1-2': Box.Multi(Box.RED, Box.YELLOW),
+            '2-1': Box.RED,
+            '2-3': Box.YELLOW
+        })
+    },
+    // #endregion
 ];
