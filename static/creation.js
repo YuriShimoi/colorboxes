@@ -91,24 +91,40 @@ function findTablePosition(element) {
 function paintTableTile(element) {
     let pos = findTablePosition(element);
     if(pos && c_selected) {
-        let code = c_selected.getAttribute('code');
-        let index = Table.formatPositionToIndex(pos[0], pos[1]);
-        if(c_selected.getAttribute('type') === 'box') {
-            if(c_table.mapping[pos[0]][pos[1]] && c_table.mapping[pos[0]][pos[1]].code === code) {
-                delete c_table.mapping[pos[0]][pos[1]];
-            }
-            else {
-                c_table.mapping[pos[0]][pos[1]] = Box.CACHE[code];
-            }
+        const code = c_selected.getAttribute('code');
+        const index = Table.formatPositionToIndex(pos[0], pos[1]);
+        const map = c_selected.getAttribute('type') === 'box'? c_table.mapping[pos[0]][pos[1]]: c_table.solution_mapping[index];
+
+        let new_value = -1;
+        if(!map) { // table selection is empty
+            new_value = Box.CACHE[code];
         }
         else {
-            if(c_table.solution_mapping[index] && c_table.solution_mapping[index].code === code) {
-                delete c_table.solution_mapping[index];
+            if(map.code === code) { // same Box in palette and in table selection
+                new_value = null;
             }
-            else {
-                c_table.solution_mapping[index] = Box.CACHE[code];
+            else if(map.isEqual(code)) { // Box in palette is in table MultiBox selection
+                map.remove(code);
+            }
+            else if(Box.CACHE[code].can_move) { // Box in palette not equal nor in table selection nor is imovable
+                if(map instanceof MultipleBox) {
+                    map.add(code);
+                }
+                else if(Box.CACHE[map.code].can_move) { // table selection is not a MultiBox nor an imovable Box
+                    new_value = Box.Multi(map, code);
+                }
             }
         }
+
+        if(new_value !== -1) {
+            if(c_selected.getAttribute('type') === 'box') {
+                c_table.mapping[pos[0]][pos[1]] = new_value;
+            }
+            else {
+                c_table.solution_mapping[index] = new_value;
+            }
+        }
+
         reloadCreateTable();
     }
 }

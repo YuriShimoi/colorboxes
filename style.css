@@ -256,7 +256,7 @@ input:checked + .slider:before {
     border-color: purple;
 }
 #level-list > button.mod-multiple {
-    background: conic-gradient(from 45deg, #222222 90deg, #2a2a2a 90deg 180deg, #222222 180deg 270deg, #2a2a2a 270deg);
+    background: conic-gradient(from 45deg, #222222 90deg, #2d2d2d 90deg 180deg, #222222 180deg 270deg, #2d2d2d 270deg);
 }
 #level-list > button:hover {
     box-shadow: white 0 0 0 2px;
@@ -318,6 +318,9 @@ input:checked + .slider:before {
     display: flex;
     align-items: stretch;
     gap: 3px;
+}
+#create-container td > span.table-box {
+    box-shadow: none;
 }
 
 #create-table td:hover {

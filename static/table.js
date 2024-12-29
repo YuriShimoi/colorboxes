@@ -32,12 +32,12 @@ class Box {
         if(code1 == code2) return true;
         if(ignore_multi) return false;
 
-        if(Box.CACHE[code1] instanceof MultipleBox) {
-            return Box.CACHE[code1].boxes.includes(code2);
+        if(MultipleBox.isInstance(code1)) {
+            return MultipleBox.includes(code2, code1);
         }
         
-        if(Box.CACHE[code2] instanceof MultipleBox) {
-            return Box.CACHE[code2].boxes.includes(code1);
+        if(MultipleBox.isInstance(code2)) {
+            return MultipleBox.includes(code1, code2);
         }
 
         return false;
@@ -46,20 +46,30 @@ class Box {
     static Multi(...boxes) {
         return new MultipleBox(...boxes);
     }
+
+    static fromCode(code) {
+        if(code in Box.CACHE) return Box.CACHE[code];
+        
+        if(MultipleBox.isInstance(code)) {
+            return new MultipleBox(...code.split(MultipleBox._sep_));
+        }
+
+        return null;
+    }
 }
 
 class MultipleBox extends Box {
+    static _sep_ = '%';
+
     constructor(...codes) {
         super();
 
         codes = codes.map(c => c instanceof Box? c.code: String(c));
-        this.code = codes.join('%');
+        this.code = codes.join(MultipleBox._sep_);
         this.boxes = codes;
         this.can_move = true;
         this.can_select = false;
         this.setRadialColors(codes);
-
-        if(!(this.code in Box.CACHE)) Box.CACHE[this.code] = this;
     }
 
     setRadialColors(codes) {
@@ -73,6 +83,33 @@ class MultipleBox extends Box {
 
         this.color = radial(codes.map(c => Box.CACHE[c].color));
         this.shadow = stripe_effect + ', ' + radial(codes.map(c => Box.CACHE[c].shadow));
+    }
+
+    add(...codes) {
+        codes = codes.map(c => c instanceof Box? c.code: String(c));
+        this.boxes = [...new Set([...this.boxes, ...codes])];
+        this.code = this.boxes.join(MultipleBox._sep_);
+        this.setRadialColors(this.boxes);
+    }
+
+    remove(...codes) {
+        codes = codes.map(c => c instanceof Box? c.code: String(c));
+        this.boxes = this.boxes.filter(c => !codes.includes(c));
+        this.code = this.boxes.join(MultipleBox._sep_);
+        this.setRadialColors(this.boxes);
+    }
+
+    includes(code) {
+        return this.boxes.includes(code instanceof Box? code.code: String(code));
+    }
+
+    static isInstance(code) {
+        return code.includes(MultipleBox._sep_);
+    }
+
+    static includes(code, multi_code) {
+        multi_code = multi_code instanceof MultipleBox? MultipleBox.code: String(multi_code);
+        return multi_code.split(MultipleBox._sep_).includes(code instanceof Box? code.code: String(code));
     }
 }
 
@@ -200,7 +237,7 @@ class Table {
         this.aux_copy = {};
         for(let index in new_mapping) {
             new_mapping[index] = new_mapping[index][0];
-            this.aux_copy[index] = Box.CACHE[new_mapping[index]];
+            this.aux_copy[index] = Box.fromCode(new_mapping[index]);
         }
 
         return new_mapping;
@@ -215,13 +252,13 @@ class Table {
         let boxes_decode = {};
         for(let box of boxes.split('$')) {
             let [pos, code] = box.split('*');
-            boxes_decode[pos] = Box.CACHE[code];
+            boxes_decode[pos] = Box.fromCode(code);
         }
 
         let solutions_decode = {};
         for(let sol of solutions.split('$')) {
             let [pos, code] = sol.split('*');
-            solutions_decode[pos] = Box.CACHE[code];
+            solutions_decode[pos] = Box.fromCode(code);
         }
 
         return new Table(size[0], size[1], Table.mapFromObject(boxes_decode), solutions_decode, modifiers.split(''));
@@ -302,7 +339,7 @@ class TableManager {
     }
 
     static selectBox(code) {
-        if(Box.CACHE[code].can_move && !Box.compare(code, TableManager.SELECTED_BOX)) {
+        if(Box.fromCode(code).can_move && !Box.compare(code, TableManager.SELECTED_BOX)) {
             TableManager.clearSelected();
             TableManager.SELECTED_BOX = code;
             for(const table of TableManager.target_table) {
@@ -392,7 +429,7 @@ class TableManager {
             for(let pos_y=0; pos_y < table_boxes.length; pos_y++) {
                 let index = Table.formatPositionToIndex(pos_x, pos_y);
                 if(index in new_mapping) {
-                    table_boxes[pos_y].appendChild(TableManager.newBoxElement(index, Box.CACHE[new_mapping[index]]));
+                    table_boxes[pos_y].appendChild(TableManager.newBoxElement(index, Box.fromCode(new_mapping[index])));
                 }
             }
         }

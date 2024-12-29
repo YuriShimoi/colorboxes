@@ -1,5 +1,6 @@
 const load_container = document.getElementById('load-container');
 const load_input = document.getElementById('load-url');
+let l_table = null;
 
 function copyUrlToCopyPaste() {
     let copyText = load_input;
@@ -9,8 +10,8 @@ function copyUrlToCopyPaste() {
 }
 
 function getUrlCode() {
-    if(load_input.value) return decodeURI(load_input.value.split('?code=')[1]);
-    return decodeURI(window.location.href.split('?code=')[1]);
+    if(load_input.value) return load_input.value.split('?code=')[1];
+    return window.location.href.split('?code=')[1];
 }
 
 function checkHasCode() {
@@ -20,7 +21,7 @@ function checkHasCode() {
 function loadUrlCode(code=null) {
     enableStage('load');
     showControls();
-    let new_table = Table.decode(code?? getUrlCode());
+    l_table = Table.decode(code?? getUrlCode());
 
     TableManager.clearPlot();
 
@@ -28,8 +29,8 @@ function loadUrlCode(code=null) {
     table_container.classList.add('table-container');
     load_container.appendChild(table_container);
 
-    new_table.container = table_container;
-    TableManager.setTarget(new_table);
+    l_table.container = table_container;
+    TableManager.setTarget(l_table);
     TableManager.plotTable();
 }
 
