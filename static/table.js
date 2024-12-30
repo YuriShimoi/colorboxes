@@ -243,6 +243,14 @@ class Table {
         return new_mapping;
     }
 
+    exportJSON() {
+        return Table.exportJSON(this);
+    }
+
+    print() {
+        console.log(JSON.stringify(this.exportJSON(), undefined, '\t').replaceAll('"', `'`));
+    }
+
     static decode(codestr) {
         codestr = decodeURI(codestr);
         let [modifiers, size, boxes, solutions] = codestr.split('+');
@@ -305,6 +313,26 @@ class Table {
             new_mapping[pos_x][pos_y] = obj_map[index];
         }
         return new_mapping;
+    }
+
+    static exportJSON(table) {
+        table = table instanceof Table? table: Table.decode(table);
+        const mapCodes = (tbl) => Object.keys(tbl).reduce((m, k) => {
+            return {...m,
+                [k]: tbl[k] instanceof MultipleBox? `Box.Multi(${tbl[k].boxes.join()})`: tbl[k].code
+            };
+        }, {});
+
+        const boxes_map = mapCodes(table.aux_copy);
+        const solution_map = mapCodes(table.solution_mapping);
+        return {
+            'modifiers': table.modifiers,
+            'table': [
+                `new Table(${table.mapping[0].length}, ${table.mapping.length}, Table.mapFromObject(`,
+                boxes_map,
+                solution_map
+            ]
+        };
     }
 }
 
