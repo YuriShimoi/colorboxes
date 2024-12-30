@@ -9,8 +9,11 @@ html, body {
     width: 100%;
     height: 100%;
     color: #f2f2f2;
-    background: #2b2b2b;
+    background: linear-gradient(#363636, #2b2b2b 30%, #2b2b2b 60%, #222222);
+    background-repeat: no-repeat;
+    background-color: #222222;
     font-family: ARCO;
+    overflow: hidden;
 }
 
 img {
@@ -70,7 +73,10 @@ hr {
 }
 
 *[hidden], .invisible {
-    display: none !important;
+    visibility: hidden;
+    position: absolute !important;
+    pointer-events: none;
+    z-index: -1;
 }
 
 button.btn-danger {
@@ -268,12 +274,24 @@ input:checked + .slider:before {
     top: 0;
     width: 100%;
     height: 100%;
-    background: #2b2b2b88;
+    background: radial-gradient(#18181855 20%, transparent 21% ,transparent 79%, #18181855 80%);
+    background-size: 3em 3em;
+    background-color: #2b2b2b55;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     gap: 2px;
+
+    opacity: 100%;
+    transform: translateY(0px);
+    transition: opacity ease-out 60ms, transform ease-out 280ms;
+
+    animation: background-move 5s linear infinite;
+}
+#overlay[hidden], #overlay.invisible {
+    opacity: 0%;
+    transform: translateY(35px);
 }
 #overlay button {
     font-size: large;
@@ -299,7 +317,7 @@ input:checked + .slider:before {
     margin: 0;
     text-align: center;
     font-weight: normal;
-    text-shadow: #000000dd 0 2px;
+    text-shadow: #000000 3px 5px;
 }
 #overlay h1 {
     font-size: 6rem;
@@ -369,4 +387,13 @@ input:checked + .slider:before {
 
 #load-url {
     max-width: 150px;
+}
+
+@keyframes background-move {
+    from {
+        background-position: 0em 0em;
+    }
+    to {
+        background-position: 3em -6em;
+    }
 }
