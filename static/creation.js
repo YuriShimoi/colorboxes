@@ -121,7 +121,8 @@ function paintTableTile(element) {
                 c_table.mapping[pos[0]][pos[1]] = new_value;
             }
             else {
-                c_table.solution_mapping[index] = new_value;
+                if(new_value === null) delete c_table.solution_mapping[index];
+                else c_table.solution_mapping[index] = new_value;
             }
         }
 
