@@ -333,6 +333,64 @@ const LEVEL_LIST = [
                 '4-4': Box.YELLOW
         })
     },
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(5, 5, Table.mapFromObject({ // BOXES
+                '0-2': Box.RED,
+                '2-0': Box.YELLOW,
+                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
+                '2-4': Box.GREEN,
+                '4-2': Box.BLUE
+            }), { // SOLUTION
+                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
+                '3-3': Box.YELLOW,
+                '3-1': Box.GREEN,
+                '1-1': Box.RED,
+                '1-3': Box.BLUE
+        })
+    },
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(5, 5, Table.mapFromObject({ // BOXES
+                '1-1': Box.RED,
+                '1-2': Box.Multi(Box.GREEN, Box.RED),
+                '1-3': Box.RED,
+                '3-1': Box.GREEN,
+                '3-2': Box.RED,
+                '3-3': Box.GREEN
+            }), { // SOLUTION
+                '1-2': Box.RED,
+                '2-3': Box.GREEN,
+                '2-2': Box.Multi(Box.GREEN, Box.RED),
+                '2-1': Box.GREEN,
+                '3-3': Box.RED,
+                '3-1': Box.RED
+        })
+    },
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(5, 7, Table.mapFromObject({ // BOXES
+                '0-3': Box.WALL,
+                '1-0': Box.YELLOW,
+                '1-4': Box.WALL,
+                '1-6': Box.BLUE,
+                '2-2': Box.BLUE,
+                '2-3': Box.Multi(Box.BLUE, Box.YELLOW),
+                '2-4': Box.YELLOW,
+                '3-0': Box.YELLOW,
+                '3-2': Box.WALL,
+                '3-6': Box.BLUE,
+                '4-3': Box.WALL
+            }), { // SOLUTION
+                '2-0': Box.BLUE,
+                '1-1': Box.BLUE,
+                '2-3': Box.Multi(Box.BLUE, Box.YELLOW),
+                '4-4': Box.BLUE,
+                '3-5': Box.YELLOW,
+                '2-6': Box.YELLOW,
+                '0-2': Box.YELLOW
+        })
+    },
     // #endregion
     // #region [PORTAL LEVELS]
     {

@@ -328,7 +328,7 @@ class Table {
         return {
             'modifiers': table.modifiers,
             'table': [
-                `new Table(${table.mapping[0].length}, ${table.mapping.length}, Table.mapFromObject(`,
+                `new Table(${table.mapping.length}, ${table.mapping[0].length}, Table.mapFromObject(`,
                 boxes_map,
                 solution_map
             ]
