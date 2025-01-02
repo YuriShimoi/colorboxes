@@ -295,6 +295,22 @@ const LEVEL_LIST = [
     // #region [MULTIPLE LEVELS]
     {
         'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(5, 5, Table.mapFromObject({ // BOXES
+                '0-2': Box.RED,
+                '2-0': Box.YELLOW,
+                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
+                '2-4': Box.GREEN,
+                '4-2': Box.BLUE
+            }), { // SOLUTION
+                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
+                '3-3': Box.YELLOW,
+                '3-1': Box.GREEN,
+                '1-1': Box.RED,
+                '1-3': Box.BLUE
+        })
+    },
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
         'table': new Table(3, 5, Table.mapFromObject({ // BOXES
             '1-1': Box.GREEN,
             '1-2': Box.Multi(Box.GREEN, Box.BLUE),
@@ -331,22 +347,6 @@ const LEVEL_LIST = [
                 '2-2': Box.Multi(Box.BLUE, Box.YELLOW),
                 '3-3': Box.YELLOW,
                 '4-4': Box.YELLOW
-        })
-    },
-    {
-        'modifiers': [MODIFIER.MULTIPLE],
-        'table': new Table(5, 5, Table.mapFromObject({ // BOXES
-                '0-2': Box.RED,
-                '2-0': Box.YELLOW,
-                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
-                '2-4': Box.GREEN,
-                '4-2': Box.BLUE
-            }), { // SOLUTION
-                '2-2': Box.Multi(Box.RED, Box.GREEN, Box.BLUE, Box.YELLOW),
-                '3-3': Box.YELLOW,
-                '3-1': Box.GREEN,
-                '1-1': Box.RED,
-                '1-3': Box.BLUE
         })
     },
     {
