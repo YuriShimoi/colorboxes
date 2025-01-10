@@ -391,6 +391,23 @@ const LEVEL_LIST = [
                 '0-2': Box.YELLOW
         })
     },
+    {
+        'modifiers': [MODIFIER.MULTIPLE],
+        'table': new Table(7, 7, Table.mapFromObject({ // BOXES
+                '1-1': Box.RED,
+                '1-5': Box.WALL,
+                '2-2': Box.Multi(Box.RED, Box.GREEN),
+                '3-3': Box.Multi(Box.RED, Box.BLUE),
+                '4-1': Box.WALL,
+                '5-2': Box.WALL,
+                '5-5': Box.Multi(Box.RED, Box.YELLOW)
+            }), { // SOLUTION
+                '1-4': Box.Multi(Box.RED, Box.YELLOW),
+                '2-5': Box.Multi(Box.RED, Box.BLUE),
+                '5-1': Box.Multi(Box.RED, Box.GREEN),
+                '2-4': Box.RED
+        })
+    },
     // #endregion
     // #region [PORTAL LEVELS]
     {
